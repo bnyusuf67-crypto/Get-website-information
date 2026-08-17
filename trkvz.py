@@ -1,5 +1,6 @@
 import re
 import requests
+from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 
@@ -55,9 +56,7 @@ MAPPING_WEBSITEID_HLSURL = {
 VIDEOID_LIVE = "00000000-0000-0000-0000-000000000000"
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 }
 
 def get_secure_token_api_url(info: dict) -> str:
@@ -87,21 +86,24 @@ def get_secure_token_api_url(info: dict) -> str:
                     if video_id == VIDEOID_LIVE:
                         hls_url = MAPPING_WEBSITEID_HLSURL.get(website_id.upper(), hls_url)
     except Exception as e:
-        print(f"Uyarı ({page_url}): Dinamik ayrıştırma başarısız oldu ({e}). Yedeğe geçiliyor.")
+        print(f"Ayrıştırma uyarısı ({page_url}): {e}")
 
-    # Sayfa engellendiyse veya id bulunamadıysa yedek statik HLS URL'si kullanılır
     if not hls_url:
         hls_url = info["fallback_hls"]
 
     return f"https://securevideotoken.tmgrup.com.tr/webtv/secure?url={quote(hls_url, safe=':/?=&')}"
 
 def main():
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    
     with open("tokens.txt", "w", encoding="utf-8") as f:
+        # Zaman damgası eklenerek Git'in her çalıştırmada değişiklik algılaması sağlanır
+        f.write(f"# Last Updated: {now_str}\n\n")
+        
         for channel_name, info in CHANNELS.items():
-            print(f"İşleniyor: {channel_name}")
             token_api_url = get_secure_token_api_url(info)
             f.write(f"{channel_name} | Referer: {info['page']} | API: {token_api_url}\n")
-            print(f" -> Hazır: {token_api_url}")
+            print(f"[OK] {channel_name} -> {token_api_url}")
 
 if __name__ == "__main__":
     main()
