@@ -1,7 +1,9 @@
-ATV: https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=GHH4RnX_DOAjfOcIMGuVUw&e=1787044894
-A Haber: https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=segV7jC66YU0HCeHllXyjA&e=1787044895
-A Para: https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=cVAUkcs1ZklLeCJNHIOb0Q&e=1787044897
-Minika Çocuk: https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&ce=3&st=F0DfmnWC4Sd0LxE6rkewZg&e=1787044899
-Minika GO: https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&ce=3&st=zL7bhQ2yslKyjT3FSiNnig&e=1787044900
-Vav TV: https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=JQJFPeFx9pjIih4VeHII3g&e=1787044902
-ATV Avrupa: https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=XDnYpalCWgcNviQWc-plWw&e=1787044903
+# Last Updated: 2026-08-17 21:08:16 UTC
+
+ATV | Referer: https://www.atv.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8
+A Haber | Referer: https://www.ahaber.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8
+A Para | Referer: https://www.apara.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8
+Minika Çocuk | Referer: https://www.minikacocuk.com.tr/webtv/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/minikagococuk/minikagococuk.m3u8
+Minika GO | Referer: https://www.minikago.com.tr/webtv/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/minikago/minikago.m3u8
+Vav TV | Referer: https://www.vavtv.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8
+ATV Avrupa | Referer: https://www.atvavrupa.tv/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8
