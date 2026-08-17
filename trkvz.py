@@ -4,16 +4,46 @@ from bs4 import BeautifulSoup
 from urllib.parse import quote
 
 CHANNELS = {
-    "ATV": "https://www.atv.com.tr/canli-yayin",
-    "A Haber": "https://www.ahaber.com.tr/canli-yayin",
-    "A News": "https://www.anews.com.tr/live-stream",
-    "A Para": "https://www.apara.com.tr/canli-yayin",
-    "A Spor": "https://www.aspor.com.tr/canli-yayin",
-    "A2 TV": "https://www.a2tv.com.tr/canli-yayin",
-    "Minika Çocuk": "https://www.minikacocuk.com.tr/webtv/canli-yayin",
-    "Minika GO": "https://www.minikago.com.tr/webtv/canli-yayin",
-    "Vav TV": "https://www.vavtv.com.tr/canli-yayin",
-    "ATV Avrupa": "https://www.atvavrupa.tv/canli-yayin",
+    "ATV": {
+        "page": "https://www.atv.com.tr/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/atv/atv.m3u8?ce=3&app=web"
+    },
+    "A Haber": {
+        "page": "https://www.ahaber.com.tr/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/ahaber/ahaber.m3u8?ce=3&app=web"
+    },
+    "A News": {
+        "page": "https://www.anews.com.tr/live-stream",
+        "fallback_hls": "https://trkvz.daioncdn.net/anews/anews.m3u8?ce=3&app=web"
+    },
+    "A Para": {
+        "page": "https://www.apara.com.tr/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/apara/apara.m3u8?ce=3&app=web"
+    },
+    "A Spor": {
+        "page": "https://www.aspor.com.tr/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/aspor/aspor.m3u8?ce=3&app=45f847c4-04e8-419a-a561-2ebf87084765"
+    },
+    "A2 TV": {
+        "page": "https://www.a2tv.com.tr/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/a2tv/a2tv.m3u8?ce=3&app=59363a60-be96-4f73-9eff-355d0ff2c758"
+    },
+    "Minika Çocuk": {
+        "page": "https://www.minikacocuk.com.tr/webtv/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&ce=3"
+    },
+    "Minika GO": {
+        "page": "https://www.minikago.com.tr/webtv/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&ce=3"
+    },
+    "Vav TV": {
+        "page": "https://www.vavtv.com.tr/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/vavtv/vavtv.m3u8?ce=3&app=web"
+    },
+    "ATV Avrupa": {
+        "page": "https://www.atvavrupa.tv/canli-yayin",
+        "fallback_hls": "https://trkvz.daioncdn.net/atvavrupa/atvavrupa.m3u8?ce=3&app=web"
+    }
 }
 
 MAPPING_WEBSITEID_HLSURL = {
@@ -23,57 +53,55 @@ MAPPING_WEBSITEID_HLSURL = {
     "01ED59F2-4067-4945-8204-45F6C6DB4045": "https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&ce=3",
 }
 VIDEOID_LIVE = "00000000-0000-0000-0000-000000000000"
-HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
-def get_secure_token_api_url(page_url: str) -> str | None:
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+}
+
+def get_secure_token_api_url(info: dict) -> str:
+    page_url = info["page"]
+    hls_url = None
+
     try:
         res = requests.get(page_url, headers=HEADERS, timeout=10)
-        soup = BeautifulSoup(res.text, "html.parser")
+        if res.status_code == 200:
+            soup = BeautifulSoup(res.text, "html.parser")
+            div = soup.find(attrs={"data-videoid": True, "data-websiteid": True})
+            
+            if not div:
+                match = re.search(r"""var\s+tmdPlayer\s*=\s*(?P<q>["'])(.*?)(?P=q)""", res.text, re.DOTALL)
+                if match:
+                    p_soup = BeautifulSoup(match.group(2), "html.parser")
+                    div = p_soup.find(attrs={"data-videoid": True, "data-websiteid": True})
 
-        div = soup.find(attrs={"data-videoid": True, "data-websiteid": True})
-        if not div:
-            match = re.search(r"""var\s+tmdPlayer\s*=\s*(?P<q>["'])(.*?)(?P=q)""", res.text, re.DOTALL)
-            if match:
-                p_soup = BeautifulSoup(match.group(2), "html.parser")
-                div = p_soup.find(attrs={"data-videoid": True, "data-websiteid": True})
+            if div:
+                video_id = div["data-videoid"]
+                website_id = div["data-websiteid"]
+                api_url = f"https://videojs.tmgrup.com.tr/getvideo/{website_id}/{video_id}"
+                api_res = requests.get(api_url, headers=HEADERS, timeout=10).json()
 
-        if not div:
-            return None
-
-        video_id = div["data-videoid"]
-        website_id = div["data-websiteid"]
-
-        # VideoJS API sorgusu
-        api_url = f"https://videojs.tmgrup.com.tr/getvideo/{website_id}/{video_id}"
-        api_res = requests.get(api_url, headers=HEADERS, timeout=10).json()
-
-        if not api_res.get("success"):
-            return None
-
-        hls_url = api_res["video"]["VideoSmilUrl"]
-        if video_id == VIDEOID_LIVE:
-            hls_url = MAPPING_WEBSITEID_HLSURL.get(website_id.upper(), hls_url)
-
-        # Doğrudan Secure Video Token API adresi oluşturulur
-        token_api_endpoint = f"https://securevideotoken.tmgrup.com.tr/webtv/secure?url={quote(hls_url, safe=':/?=&')}"
-        return token_api_endpoint
-
+                if api_res.get("success"):
+                    hls_url = api_res["video"]["VideoSmilUrl"]
+                    if video_id == VIDEOID_LIVE:
+                        hls_url = MAPPING_WEBSITEID_HLSURL.get(website_id.upper(), hls_url)
     except Exception as e:
-        print(f"Hata ({page_url}): {e}")
+        print(f"Uyarı ({page_url}): Dinamik ayrıştırma başarısız oldu ({e}). Yedeğe geçiliyor.")
 
-    return None
+    # Sayfa engellendiyse veya id bulunamadıysa yedek statik HLS URL'si kullanılır
+    if not hls_url:
+        hls_url = info["fallback_hls"]
+
+    return f"https://securevideotoken.tmgrup.com.tr/webtv/secure?url={quote(hls_url, safe=':/?=&')}"
 
 def main():
     with open("tokens.txt", "w", encoding="utf-8") as f:
-        for channel_name, page_url in CHANNELS.items():
-            print(f"Token API Adresi Oluşturuluyor: {channel_name}")
-            api_endpoint = get_secure_token_api_url(page_url)
-            
-            if api_endpoint:
-                f.write(f"{channel_name}: {api_endpoint}\n")
-                print(f" -> [OK] API URL: {api_endpoint}")
-            else:
-                print(" -> [HATA] Oluşturulamadı.")
+        for channel_name, info in CHANNELS.items():
+            print(f"İşleniyor: {channel_name}")
+            token_api_url = get_secure_token_api_url(info)
+            f.write(f"{channel_name} | Referer: {info['page']} | API: {token_api_url}\n")
+            print(f" -> Hazır: {token_api_url}")
 
 if __name__ == "__main__":
     main()
