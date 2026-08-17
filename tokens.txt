@@ -1,7 +1,12 @@
-ATV: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8
-A Haber: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8
-A Para: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8
-Minika Çocuk: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&ce=3
-Minika GO: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&ce=3
-Vav TV: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8
-ATV Avrupa: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8
+# Last Updated: 2026-08-17 21:04:44 UTC
+
+ATV | Referer: https://www.atv.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/atv/atv.m3u8?ce=3&app=web
+A Haber | Referer: https://www.ahaber.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/ahaber/ahaber.m3u8?ce=3&app=web
+A News | Referer: https://www.anews.com.tr/live-stream | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/anews/anews.m3u8?ce=3&app=web
+A Para | Referer: https://www.apara.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8
+A Spor | Referer: https://www.aspor.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/aspor/aspor.m3u8?ce=3&app=45f847c4-04e8-419a-a561-2ebf87084765
+A2 TV | Referer: https://www.a2tv.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/a2tv/a2tv.m3u8?ce=3&app=59363a60-be96-4f73-9eff-355d0ff2c758
+Minika Çocuk | Referer: https://www.minikacocuk.com.tr/webtv/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/minikagococuk/minikagococuk.m3u8
+Minika GO | Referer: https://www.minikago.com.tr/webtv/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/minikago/minikago.m3u8
+Vav TV | Referer: https://www.vavtv.com.tr/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8
+ATV Avrupa | Referer: https://www.atvavrupa.tv/canli-yayin | API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/atvavrupa/atvavrupa.m3u8?ce=3&app=web
