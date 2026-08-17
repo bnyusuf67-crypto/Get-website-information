@@ -30,7 +30,7 @@ jobs:
           pip install requests beautifulsoup4
 
       - name: Betiği Çalıştır
-        run: python trkvx.py
+        run: python trkvz.py
 
       - name: Değişiklikleri Kaydet ve Push Et
         run: |
