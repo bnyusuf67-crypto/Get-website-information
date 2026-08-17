@@ -76,7 +76,7 @@ def fetch_turkuvaz_stream_source(page_url: str) -> str | None:
     return None
 
 def main():
-    with open("tokens.txt", "w", encoding="utf-8") as f:
+    with open("trkvz-tokens.txt", "w", encoding="utf-8") as f:
         for channel_name, page_url in CHANNELS.items():
             print(f"Çekiliyor: {channel_name}")
             stream_source = fetch_turkuvaz_stream_source(page_url)
