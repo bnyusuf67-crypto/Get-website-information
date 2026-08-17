@@ -1,0 +1,29 @@
+#EXTM3U
+#EXTINF:-1 tvg-name="ATV",ATV
+#EXTVLCOPT:http-referrer=https://www.atv.com.tr/canli-yayin
+https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=ciQHG13vjXSReCPg2uXRBg&e=1787046297
+
+#EXTINF:-1 tvg-name="A Haber",A Haber
+#EXTVLCOPT:http-referrer=https://www.ahaber.com.tr/canli-yayin
+https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=cG1NQ1dgi7jZV7oJQ7bT7g&e=1787046299
+
+#EXTINF:-1 tvg-name="A Para",A Para
+#EXTVLCOPT:http-referrer=https://www.apara.com.tr/canli-yayin
+https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=NBr01JrmirhWK6rvHx_arQ&e=1787046301
+
+#EXTINF:-1 tvg-name="Minika Çocuk",Minika Çocuk
+#EXTVLCOPT:http-referrer=https://www.minikacocuk.com.tr/webtv/canli-yayin
+https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&st=JeDjyCFHHIINkkr9eOskUw&e=1787046303
+
+#EXTINF:-1 tvg-name="Minika GO",Minika GO
+#EXTVLCOPT:http-referrer=https://www.minikago.com.tr/webtv/canli-yayin
+https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&st=DD7BnUiacdCdc3OfagadNA&e=1787046304
+
+#EXTINF:-1 tvg-name="Vav TV",Vav TV
+#EXTVLCOPT:http-referrer=https://www.vavtv.com.tr/canli-yayin
+https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=JHvwu54GjndlWtH36C_nsg&e=1787046306
+
+#EXTINF:-1 tvg-name="ATV Avrupa",ATV Avrupa
+#EXTVLCOPT:http-referrer=https://www.atvavrupa.tv/canli-yayin
+https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=IvVk6S8JLw0uazODr9Mhiw&e=1787046308
+
