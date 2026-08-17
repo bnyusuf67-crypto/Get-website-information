@@ -90,7 +90,7 @@ def process_channel(channel_name: str, page_url: str):
 def main():
     now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
-    with open("tokens.txt", "w", encoding="utf-8") as f_txt, \
+    with open("trkvz-tokens.txt", "w", encoding="utf-8") as f_txt, \
          open("playlist.m3u", "w", encoding="utf-8") as f_m3u:
 
         f_txt.write(f"# Last Updated: {now_str}\n\n")
