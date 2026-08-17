@@ -1,0 +1,7 @@
+ATV: https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=nyiQdwb_RwMyEBQWca9UsA&e=1787044424
+A Haber: https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=7ReY7oR_B4MkrTun7ufWTA&e=1787044425
+A Para: https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=TSRrxwZHxIywlbpaljLDPA&e=1787044426
+Minika Çocuk: https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&ce=3&st=T5sXBZ696u76Y5Kizp5YWQ&e=1787044428
+Minika GO: https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&ce=3&st=1UWkVl-vYDVFxa-DAW7jQA&e=1787044429
+Vav TV: https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=jinjzzRal_Si4ahUetmrxA&e=1787044434
+ATV Avrupa: https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=i_vb1uyrRN4iJFwZeesNMA&e=1787044435
