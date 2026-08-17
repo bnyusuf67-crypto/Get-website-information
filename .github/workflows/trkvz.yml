@@ -1,4 +1,4 @@
-name: Secure Token API Source Updater
+name: Secure Token Source Updater
 
 on:
   schedule:
@@ -34,6 +34,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git status
-          git commit -m "Auto update trkvz-tokens.txt [skip ci]" || echo "Commit edilecek değişiklik yok."
+          git commit -m "Auto update tokens and playlist [skip ci]" || echo "Commit edilecek değişiklik yok."
           git push
