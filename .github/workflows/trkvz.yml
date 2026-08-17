@@ -29,13 +29,21 @@ jobs:
       - name: Betiği Çalıştır
         run: python trkvz.py
 
-      - name: Oluşan Dosyayı Logla (Kontrol Amaçlı)
-        run: cat trkvz-tokens.txt
-
       - name: Değişiklikleri Kaydet ve Push Et
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add trkvz-tokens.txt
-          git commit -m "Auto update tokens.txt [skip ci]"
+          
+          # Sadece değişiklik varsa commit ve push yap
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto update tokens.txt [skip ci]"
+            git push
+          else
+            echo "Değişiklik tespit edilmedi, commit atlanıyor."
+          fi
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add trkvz-tokens.txt
+          git commit -m "Auto update trkvz-tokens.txt [skip ci]"
           git push
