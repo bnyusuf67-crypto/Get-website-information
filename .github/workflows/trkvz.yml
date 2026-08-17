@@ -30,7 +30,7 @@ jobs:
         run: python trkvz.py
 
       - name: Oluşan Dosyayı Logla (Kontrol Amaçlı)
-        run: cat tokens.txt
+        run: cat trkvz-tokens.txt
 
       - name: Değişiklikleri Kaydet ve Push Et
         run: |
