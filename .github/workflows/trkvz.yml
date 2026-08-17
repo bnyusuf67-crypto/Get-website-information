@@ -28,11 +28,11 @@ jobs:
           pip install requests beautifulsoup4
 
       - name: Betiği Çalıştır
-        run: python main.py
+        run: python trkvz.py
 
       - name: Değişiklikleri Kaydet ve Push Et
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add tokens.txt
+          git add trkvz-tokens.txt
           git diff --staged --quiet || (git commit -m "Update token API sources [skip ci]" && git push)
