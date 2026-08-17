@@ -2,9 +2,8 @@ name: Secure Token Source Updater
 
 on:
   schedule:
-    # Her saat başı otomatik çalışır
     - cron: '0 * * * *'
-  workflow_dispatch: # Manuel tetikleme butonu
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,9 +16,8 @@ jobs:
       - name: Repoyu Çek
         uses: actions/checkout@v4
 
-      # GitHub Actions IP engellerini ve 403 Forbidden hatalarını aşmak için WARP tüneli başlatır
       - name: Cloudflare WARP Kur
-        uses: fscarmen/warp-on-actions@v1
+        uses: fscarmen/warp-on-actions@main
 
       - name: Python Kur
         uses: actions/setup-python@v5
@@ -32,7 +30,7 @@ jobs:
           pip install requests beautifulsoup4
 
       - name: Betiği Çalıştır
-        run: python trkvz.py
+        run: python trkvx.py
 
       - name: Değişiklikleri Kaydet ve Push Et
         run: |
