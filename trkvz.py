@@ -1,6 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import quote
 
 CHANNELS = {
     "ATV": "https://www.atv.com.tr/canli-yayin",
@@ -23,7 +24,7 @@ MAPPING_WEBSITEID_HLSURL = {
 }
 VIDEOID_LIVE = "00000000-0000-0000-0000-000000000000"
 
-def get_secure_video_token(page_url: str) -> str | None:
+def get_token_source_url(page_url: str) -> str | None:
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
         res = requests.get(page_url, headers=headers, timeout=10)
@@ -51,15 +52,10 @@ def get_secure_video_token(page_url: str) -> str | None:
         if video_id == VIDEOID_LIVE:
             hls_url = MAPPING_WEBSITEID_HLSURL.get(website_id.upper(), hls_url)
 
-        token_api = "https://securevideotoken.tmgrup.com.tr/webtv/secure"
-        token_res = requests.get(
-            token_api,
-            params={"url": hls_url},
-            headers={"Referer": page_url, "User-Agent": "Mozilla/5.0"},
-            timeout=10
-        ).json()
+        # Çözümlenmiş M3U8 yerine doğrudan Token API kaynağını döndürür
+        token_source_api = f"https://securevideotoken.tmgrup.com.tr/webtv/secure?url={quote(hls_url, safe=':/?=&')}"
+        return token_source_api
 
-        return token_res.get("Url") if token_res.get("Success") else None
     except Exception:
         return None
 
@@ -68,16 +64,16 @@ def main():
     
     with open(file_name, "w", encoding="utf-8") as file:
         for channel_name, page_url in CHANNELS.items():
-            print(f"Çözümleniyor: {channel_name}")
-            token_url = get_secure_video_token(page_url)
+            print(f"Token Kaynağı İşleniyor: {channel_name}")
+            token_source_url = get_token_source_url(page_url)
             
-            if token_url:
-                file.write(f"{channel_name}: {token_url}\n")
-                print(f" -> [OK] Adres alındı.")
+            if token_source_url:
+                file.write(f"{channel_name}: {token_source_url}\n")
+                print(f" -> [OK] Token Kaynağı Oluşturuldu.")
             else:
-                print(f" -> [HATA] Adres alınamadı.")
+                print(f" -> [HATA] Kaynak oluşturulamadı.")
 
-    print(f"\nİşlem tamamlandı! Adresler '{file_name}' dosyasına kaydedildi.")
+    print(f"\nİşlem tamamlandı! API kaynakları '{file_name}' dosyasına aktarıldı.")
 
 if __name__ == "__main__":
     main()
