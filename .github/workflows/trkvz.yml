@@ -27,7 +27,7 @@ jobs:
           pip install requests beautifulsoup4
 
       - name: Token Betiğini Çalıştır
-        run: python main.py
+        run: python trkvz.py
 
       - name: Değişiklikleri Kaydet ve Push Et
         run: |
