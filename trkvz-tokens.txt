@@ -1,37 +1,37 @@
-# Last Updated: 2026-08-18 03:11:05 UTC
+# Last Updated: 2026-08-18 05:17:07 UTC
 
 --- ATV ---
 Referer: https://www.atv.com.tr/canli-yayin
 Secure Token API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8
-Aktif Imzali M3U8: https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=A36Eo7aATI2KOPijeuXPvw&e=1787067866
+Aktif Imzali M3U8: https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=BJxIPjAj11-5Tummim2UWA&e=1787075428
 
 --- A Haber ---
 Referer: https://www.ahaber.com.tr/canli-yayin
 Secure Token API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8
-Aktif Imzali M3U8: https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=zX05OqZXUJ-pfntpcUI5Lg&e=1787067867
+Aktif Imzali M3U8: https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=PgrLxdwqAgDGNFdzYlWDEg&e=1787075429
 
 --- A Para ---
 Referer: https://www.apara.com.tr/canli-yayin
 Secure Token API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8
-Aktif Imzali M3U8: https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=28FZmWa_IkeR31wF06thAw&e=1787067869
+Aktif Imzali M3U8: https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=cdbtmJ9-A-q9-UpcOA4JdQ&e=1787075430
 
 --- Minika Çocuk ---
 Referer: https://www.minikacocuk.com.tr/webtv/canli-yayin
 Secure Token API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&ce=3
-Aktif Imzali M3U8: https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&st=hdnzJLuVpBqsU36UdEJAow&e=1787067872
+Aktif Imzali M3U8: https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&st=Dh0fvbPLfftWmiAQP_eDRQ&e=1787075431
 
 --- Minika GO ---
 Referer: https://www.minikago.com.tr/webtv/canli-yayin
 Secure Token API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&ce=3
-Aktif Imzali M3U8: https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&st=y2CVZ1zaiklnFJYqvJ0vyA&e=1787067873
+Aktif Imzali M3U8: https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&st=Sd_zbO45oRFYrtSSaJiCZQ&e=1787075432
 
 --- Vav TV ---
 Referer: https://www.vavtv.com.tr/canli-yayin
 Secure Token API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8
-Aktif Imzali M3U8: https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=1YUUfSgSk3l78ajVzqGFpA&e=1787067876
+Aktif Imzali M3U8: https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=skVFt6Gl2jJuAkHN_QDONQ&e=1787075436
 
 --- ATV Avrupa ---
 Referer: https://www.atvavrupa.tv/canli-yayin
 Secure Token API: https://securevideotoken.tmgrup.com.tr/webtv/secure?url=https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8
-Aktif Imzali M3U8: https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=t47itoG3ZCPMJTOqIUqegg&e=1787067878
+Aktif Imzali M3U8: https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=R-i62m2lyOhyAwojkYpdzQ&e=1787075438
 
