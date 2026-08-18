@@ -1,4 +1,6 @@
 import requests
+import re
+import os
 
 CHANNELS = {
     "ATV": "https://www.atv.com.tr/canli-yayin",
@@ -14,26 +16,48 @@ CHANNELS = {
 }
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Referer": "https://www.atv.com.tr/"
 }
 
-# TCP bağlantılarını açık tutarak hızı artırır (Session kullanımı)
-session = requests.Session()
-session.headers.update(HEADERS)
+def get_m3u8_url(page_url):
+    try:
+        response = requests.get(page_url, headers=HEADERS, timeout=8)
+        if response.status_code == 200:
+            # Sayfa içinde geçen m3u8 linkini regex ile bulur
+            match = re.search(r'https?://[^\s\'"]+\.m3u8[^\s\'"]*', response.text)
+            if match:
+                return match.group(0)
+        else:
+            print(f"[HATA] {page_url} - Status: {response.status_code}")
+    except Exception as e:
+        print(f"[BAĞLANTI HATASI] {page_url}: {e}")
+    return None
 
-def run():
+def main():
+    playlist_lines = ["#EXTM3U"]
+    success_count = 0
+
+    print("Kanal linkleri taranıyor...")
     for name, url in CHANNELS.items():
-        try:
-            # Doğrudan TR VPS IP'si ile istek - proxy arama derdi yok
-            res = session.get(url, timeout=5)
-            if res.status_code == 200:
-                print(f"[BAŞARILI] {name} - Status: 200")
-                # Buraya M3U8/Token ayrıştırma mantığınızı ekleyin
-            else:
-                print(f"[HATA] {name} - Status: {res.status_code}")
-        except Exception as e:
-            print(f"[BAĞLANTI HATASI] {name}: {e}")
+        m3u8_link = get_m3u8_url(url)
+        if m3u8_link:
+            print(f"[BAŞARILI] {name} -> {m3u8_link[:50]}...")
+            playlist_lines.append(f"#EXTINF:-1 tvg-name=\"{name}\",{name}")
+            playlist_lines.append(m3u8_link)
+            success_count += 1
+        else:
+            print(f"[BAŞARISIZ] {name} linki alınamadı.")
+
+    # Eğer hiçbir kanal alınamadıysa hata ver ki Workflow Fallback adımı devreye girsin
+    if success_count == 0:
+        print("HİÇBİR KANAL ÇEKİLEMEDİ! Geo-Block veya IP engeline takılındı.")
+        exit(1)
+
+    # M3U dosyasına yaz
+    with open("playlist.m3u", "w", encoding="utf-8") as f:
+        f.write("\n".join(playlist_lines))
+    print("playlist.m3u başarıyla güncellendi.")
 
 if __name__ == "__main__":
-    run()
+    main()
