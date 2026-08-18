@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # GitHub Actions'ın repoya yazabilmesi için kritik yetki
+  contents: write
 
 jobs:
   update-playlist:
@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies & Playwright Browser
         run: |
           python -m pip install --upgrade pip
-          pip install playwright curl-cffi
+          pip install playwright curl-cffi streamlink requests
           playwright install chromium
           playwright install-deps chromium
 
