@@ -1,6 +1,6 @@
-import requests
+from curl_cffi import requests
 
-# List of Dicts yapısı (referer bilgileri eklendi)
+# List of Dicts yapısı ve kanal bazlı referer tanımları
 CHANNELS = [
     {"name": "ATV", "slug": "atv", "referer": "https://www.atv.com.tr/"},
     {"name": "A Haber", "slug": "ahaber", "referer": "https://www.ahaber.com.tr/"},
@@ -14,33 +14,40 @@ CHANNELS = [
     {"name": "ATV Avrupa", "slug": "atvavrupa", "referer": "https://www.atvavrupa.tv/"}
 ]
 
+RESOLVER_URL = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
+
 def capture_ercdn_m3u8(slug, referer_url):
-    session = requests.Session()
+    target_url = RESOLVER_URL.format(slug=slug)
     
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    headers = {
         "Referer": referer_url,
         "Origin": referer_url.rstrip('/'),
         "Accept": "*/*"
-    })
-
-    target_url = f"https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
+    }
 
     try:
-        response = session.get(target_url, allow_redirects=True, timeout=10)
+        # impersonate="chrome" ile gerçek bir tarayıcının TLS parmak izi taklit edilir
+        response = requests.get(
+            target_url, 
+            headers=headers, 
+            impersonate="chrome", 
+            allow_redirects=True, 
+            timeout=15
+        )
         
+        # Doğrudan son ulaşılan URL ercdn içeriyorsa
         if "ercdn.net" in response.url:
             return response.url
-
+            
+        # Yönlendirme geçmişindeki (History) ercdn adresini arama
         for req in response.history:
             location = req.headers.get("Location", "")
             if "ercdn.net" in location:
                 return location
-
+                
         return response.url
-
     except Exception as e:
-        print(f"[AĞ HATASI] {slug}: {e}")
+        print(f"[HATA] {slug} çözülemedi: {e}")
         return None
 
 def build_playlist():
@@ -49,7 +56,7 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    print("Kanal kaynakları taranıyor...\n")
+    print("curl-cffi ile kanal kaynakları taranıyor...\n")
 
     for ch in CHANNELS:
         name = ch["name"]
@@ -65,6 +72,7 @@ def build_playlist():
         else:
             print(f"[BAŞARISIZ] {name} alınamadı.")
 
+    # playlist.m3u dosyasına kaydet
     with open("playlist.m3u", "w", encoding="utf-8") as f:
         f.write("\n".join(playlist_lines) + "\n")
         
