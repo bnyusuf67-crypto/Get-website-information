@@ -20,36 +20,47 @@ def capture_ercdn_m3u8(channel):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
         "Referer": channel["referer"],
+        "Origin": channel["referer"].rstrip('/'),
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
     }
     session.headers.update(headers)
 
     try:
-        # 1. Adım: Canlı yayın sayfasına bağlanıp ercdn linklerini arıyoruz
+        # 1. Adım: Canlı yayın sayfasına bağlanıp securevideotoken adresini ve token parametrelerini çekiyoruz
         res = session.get(channel["embed_url"], impersonate="chrome", timeout=15)
         
-        found_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8', res.text)
-        if found_links:
-            # Radyo linklerini ele, sadece TV akışını al
-            for link in found_links:
-                if "radyo" not in link.lower():
-                    return link
-
-        # 2. Adım: Secure Video Token servislerini tarama
-        token_match = re.search(r'securevideotoken\.tmgrup\.com\.tr[^\s<>"]+', res.text)
+        # Sayfa içinde securevideotoken.tmgrup.com.tr adresini ve token/parametrelerini tam olarak yakala
+        token_match = re.search(r'https?://securevideotoken\.tmgrup\.com\.tr[^\s<>"]+', res.text)
+        if not token_match:
+            # Bazı sayfalar tırnak içinde veya başka formatta tutabilir, alternatif regex
+            token_match = re.search(r'securevideotoken\.tmgrup\.com\.tr[^\s<>"\']+', res.text)
+            
         if token_match:
-            token_url = "https://" + token_match.group(0)
+            raw_token_url = token_match.group(0)
+            token_url = raw_token_url if raw_token_url.startswith("http") else "https://" + raw_token_url
+            
+            # 2. Adım: Token servisine istek atarak dinamik/güvenli token'lı ercdn m3u8 adresini alıyoruz
             token_res = session.get(token_url, impersonate="chrome", timeout=10)
-            sub_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8', token_res.text)
+            
+            # Gelen yanıt içerisindeki ercdn.net uzantılı token'lı linkleri bul
+            sub_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8[^\s<>"]*', token_res.text)
             if sub_links:
                 for link in sub_links:
+                    # Radyo veya geçersiz yayınları ele, token parametresi (st=,h= vb.) içeren gerçek akışı seç
                     if "radyo" not in link.lower():
                         return link
 
+        # Alternatif: Eğer doğrudan sayfada token'lı ercdn linki gömülüyse
+        direct_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8[^\s<>"]*', res.text)
+        if direct_links:
+            for link in direct_links:
+                if "radyo" not in link.lower():
+                    return link
+
         return None
     except Exception as e:
-        print(f"[HATA] {channel['name']} çözülemedi: {e}")
+        print(f"[HATA] {channel['name']} token çözülemedi: {e}")
         return None
 
 def build_playlist():
@@ -58,7 +69,7 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    print("Turkuvaz TV kaynakları doğrudan taranıyor...\n")
+    print("Turkuvaz token tabanlı akışlar taranıyor...\n")
     success_count = 0
 
     for ch in CHANNELS:
@@ -70,14 +81,14 @@ def build_playlist():
             print(f"[BAŞARILI] {ch['name']} -> {stream_url}")
             success_count += 1
         else:
-            print(f"[REDDEDİLDİ] {ch['name']} için geçerli TV kaynağı bulunamadı.")
+            print(f"[REDDEDİLDİ] {ch['name']} için geçerli token'lı kaynak alınamadı.")
 
     if success_count > 0:
         with open("playlist.m3u", "w", encoding="utf-8") as f:
             f.write("\n".join(playlist_lines) + "\n")
         print(f"\nplaylist.m3u başarıyla güncellendi ({success_count} kanal).")
     else:
-        print("\n[UYARI] Hiçbir kanal için ercdn kaynağı bulunamadı, dosya değiştirilmedi.")
+        print("\n[UYARI] Hiçbir kanal için token'lı kaynak bulunamadı, dosya değiştirilmedi.")
 
 if __name__ == "__main__":
     build_playlist()
