@@ -19,8 +19,8 @@ RESOLVER_URL = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
 # Kullanmayacaksanız None yapabilirsiniz.
 USE_PROXY = True 
 PROXIES = {
-    "http": "http://192.168.1.116",
-    "https": "http://192.168.1.116"
+    "http": "94.78.67.171:80",
+    "https": "94.78.67.171:80"
 } if USE_PROXY else None
 
 def capture_ercdn_m3u8(slug, referer_url):
