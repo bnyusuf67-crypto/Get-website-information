@@ -1,22 +1,4 @@
 #EXTM3U
 #EXT-X-VERSION:3
-#EXTINF:-1 tvg-name="ATV" group-title="Turkuvaz",ATV
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=atv&.m3u8
-#EXTINF:-1 tvg-name="A Haber" group-title="Turkuvaz",A Haber
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=ahaber&.m3u8
-#EXTINF:-1 tvg-name="A News" group-title="Turkuvaz",A News
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=anews&.m3u8
-#EXTINF:-1 tvg-name="A Para" group-title="Turkuvaz",A Para
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=apara&.m3u8
-#EXTINF:-1 tvg-name="A Spor" group-title="Turkuvaz",A Spor
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=aspor&.m3u8
-#EXTINF:-1 tvg-name="A2 TV" group-title="Turkuvaz",A2 TV
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=a2tv&.m3u8
-#EXTINF:-1 tvg-name="Minika Çocuk" group-title="Turkuvaz",Minika Çocuk
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=minikacocuk&.m3u8
-#EXTINF:-1 tvg-name="Minika GO" group-title="Turkuvaz",Minika GO
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=minikago&.m3u8
 #EXTINF:-1 tvg-name="Vav TV" group-title="Turkuvaz",Vav TV
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=vavtv&.m3u8
-#EXTINF:-1 tvg-name="ATV Avrupa" group-title="Turkuvaz",ATV Avrupa
-https://uzunmuhalefet.unaux.com/trkvz.php?kanal=atvavrupa&.m3u8
+https://trkvz-radyolar.ercdn.net/radyovav/playlist.m3u8
