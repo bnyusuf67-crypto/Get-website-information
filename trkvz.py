@@ -22,8 +22,18 @@ def capture_ercdn_m3u8(slug, referer_url):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Referer": referer_url,
         "Origin": referer_url.rstrip('/'),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Sec-Ch-Ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": '"Windows"',
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "cross-site",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1"
     })
 
     try:
@@ -37,19 +47,18 @@ def capture_ercdn_m3u8(slug, referer_url):
             timeout=15
         )
         
-        # 1. Doğrudan son URL ercdn içeriyorsa
+        # 1. Doğrudan son ulaşılan URL ercdn içeriyorsa
         if "ercdn.net" in response.url:
             return response.url
             
-        # 2. Yönlendirme geçmişinde ercdn varsa
+        # 2. Yönlendirme geçmişindeki (History) ercdn adresini arama
         for req in response.history:
             location = req.headers.get("Location", "")
             if "ercdn.net" in location:
                 return location
                 
-        # Eğer ercdn yakalanamadıysa None döndür (Unaux adresini asla kabul etme)
+        # Ercdn bulunamadıysa asla unaux adresi döndürme, None ver
         return None
-
     except Exception as e:
         print(f"[HATA] {slug} çözülemedi: {e}")
         return None
@@ -70,7 +79,7 @@ def build_playlist():
         
         stream_url = capture_ercdn_m3u8(slug, referer)
         
-        # Sadece ercdn.net içeren geçerli linkleri ekle
+        # Sadece ve sadece içinde ercdn.net geçenleri ekle
         if stream_url and "ercdn.net" in stream_url:
             playlist_lines.append(f'#EXTINF:-1 tvg-name="{name}" group-title="Turkuvaz",{name}')
             playlist_lines.append(stream_url)
@@ -84,7 +93,7 @@ def build_playlist():
             f.write("\n".join(playlist_lines) + "\n")
         print(f"\nplaylist.m3u başarıyla güncellendi ({success_count} kanal).")
     else:
-        print("\n[UYARI] Hiçbir kanal için ercdn kaynağı bulunamadı, playlist.m3u değiştirilmedi.")
+        print("\n[UYARI] Hiçbir kanal için ercdn kaynağı bulunamadı, dosya değiştirilmedi.")
 
 if __name__ == "__main__":
     build_playlist()
