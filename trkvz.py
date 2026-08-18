@@ -1,63 +1,52 @@
 from curl_cffi import requests
+import re
+import json
 
 CHANNELS = [
-    {"name": "ATV", "slug": "atv", "referer": "https://www.atv.com.tr/"},
-    {"name": "A Haber", "slug": "ahaber", "referer": "https://www.ahaber.com.tr/"},
-    {"name": "A News", "slug": "anews", "referer": "https://anews.com.tr/"},
-    {"name": "A Para", "slug": "apara", "referer": "https://www.apara.com.tr/"},
-    {"name": "A Spor", "slug": "aspor", "referer": "https://www.aspor.com.tr/"},
-    {"name": "A2 TV", "slug": "a2tv", "referer": "https://www.a2tv.com.tr/"},
-    {"name": "Minika Çocuk", "slug": "minikacocuk", "referer": "https://www.minikacocuk.com.tr/"},
-    {"name": "Minika GO", "slug": "minikago", "referer": "https://www.minikago.com.tr/"},
-    {"name": "Vav TV", "slug": "vavtv", "referer": "https://www.vavtv.com.tr/"},
-    {"name": "ATV Avrupa", "slug": "atvavrupa", "referer": "https://www.atvavrupa.tv/"}
+    {"name": "ATV", "slug": "atv", "referer": "https://www.atv.com.tr/", "embed_url": "https://www.atv.com.tr/canli-yayin"},
+    {"name": "A Haber", "slug": "ahaber", "referer": "https://www.ahaber.com.tr/", "embed_url": "https://www.ahaber.com.tr/canli-yayin"},
+    {"name": "A News", "slug": "anews", "referer": "https://anews.com.tr/", "embed_url": "https://www.anews.com.tr/anews-hd"},
+    {"name": "A Para", "slug": "apara", "referer": "https://www.apara.com.tr/", "embed_url": "https://www.apara.com.tr/apara-canli-yayin"},
+    {"name": "A Spor", "slug": "aspor", "referer": "https://www.aspor.com.tr/", "embed_url": "https://www.aspor.com.tr/aspor-canli-yayin"},
+    {"name": "A2 TV", "slug": "a2tv", "referer": "https://www.a2tv.com.tr/", "embed_url": "https://www.a2tv.com.tr/canli-yayin"},
+    {"name": "Minika Çocuk", "slug": "minikacocuk", "referer": "https://www.minikacocuk.com.tr/", "embed_url": "https://www.minikacocuk.com.tr/canli-yayin"},
+    {"name": "Minika GO", "slug": "minikago", "referer": "https://www.minikago.com.tr/", "embed_url": "https://www.minikago.com.tr/canli-yayin"},
+    {"name": "Vav TV", "slug": "vavtv", "referer": "https://www.vavtv.com.tr/", "embed_url": "https://www.vavtv.com.tr/canli-yayin"},
+    {"name": "ATV Avrupa", "slug": "atvavrupa", "referer": "https://www.atvavrupa.tv/", "embed_url": "https://www.atvavrupa.tv/canli-yayin"}
 ]
 
-RESOLVER_URL = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
-
-# Eğer proxy kullanacaksanız burayı doldurabilirsiniz (Örn: Türkiye lokasyonlu bir proxy)
-# Kullanmayacaksanız None yapabilirsiniz.
-USE_PROXY = True 
-PROXIES = {
-    "http": "94.78.67.171:80",
-    "https": "94.78.67.171:80"
-} if USE_PROXY else None
-
-def capture_ercdn_m3u8(slug, referer_url):
+def capture_ercdn_m3u8(channel):
     session = requests.Session()
     
-    session.headers.update({
+    headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-        "Referer": referer_url,
-        "Origin": referer_url.rstrip('/'),
+        "Referer": channel["referer"],
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
-    })
+    }
+    session.headers.update(headers)
 
     try:
-        # Ana sayfa çerez doğrulaması (Proxy varsa proxy ile)
-        session.get("https://uzunmuhalefet.unaux.com/", impersonate="chrome", proxies=PROXIES, timeout=10)
-
-        target_url = RESOLVER_URL.format(slug=slug)
-        response = session.get(
-            target_url, 
-            impersonate="chrome", 
-            proxies=PROXIES,
-            allow_redirects=True, 
-            timeout=15
-        )
+        # 1. Adım: Kanalın canlı yayın sayfasına bağlanıp sayfa içindeki m3u8 veya token verilerini arıyoruz
+        res = session.get(channel["embed_url"], impersonate="chrome", timeout=15)
         
-        if "ercdn.net" in response.url:
-            return response.url
-            
-        for req in response.history:
-            location = req.headers.get("Location", "")
-            if "ercdn.net" in location:
-                return location
-                
+        # Sayfa içinde doğrudan ercdn.net geçen bir m3u8 linki var mı kontrol et
+        found_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8', res.text)
+        if found_links:
+            return found_links[0]
+
+        # 2. Adım: Eğer doğrudan bulunamadıysa, securevideotoken servislerini veya player kaynaklarını tara
+        token_match = re.search(r'securevideotoken\.tmgrup\.com\.tr[^\s<>"]+', res.text)
+        if token_match:
+            token_url = "https://" + token_match.group(0)
+            token_res = session.get(token_url, impersonate="chrome", timeout=10)
+            sub_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8', token_res.text)
+            if sub_links:
+                return sub_links[0]
+
         return None
     except Exception as e:
-        print(f"[AĞ HATASI] {slug}: {e}")
+        print(f"[HATA] {channel['name']} çözülemedi: {e}")
         return None
 
 def build_playlist():
@@ -66,23 +55,19 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    print("Proxy ve güvenlik filtreleriyle taranıyor...\n")
+    print("Turkuvaz kaynakları doğrudan Python ile taranıyor...\n")
     success_count = 0
 
     for ch in CHANNELS:
-        name = ch["name"]
-        slug = ch["slug"]
-        referer = ch["referer"]
-        
-        stream_url = capture_ercdn_m3u8(slug, referer)
+        stream_url = capture_ercdn_m3u8(ch)
         
         if stream_url and "ercdn.net" in stream_url:
-            playlist_lines.append(f'#EXTINF:-1 tvg-name="{name}" group-title="Turkuvaz",{name}')
+            playlist_lines.append(f'#EXTINF:-1 tvg-name="{ch["name"]}" group-title="Turkuvaz",{ch["name"]}')
             playlist_lines.append(stream_url)
-            print(f"[BAŞARILI] {name} -> {stream_url}")
+            print(f"[BAŞARILI] {ch['name']} -> {stream_url}")
             success_count += 1
         else:
-            print(f"[REDDEDİLDİ] {name} için geçerli ercdn kaynağı alınamadı.")
+            print(f"[REDDEDİLDİ] {ch['name']} için geçerli ercdn kaynağı bulunamadı.")
 
     if success_count > 0:
         with open("playlist.m3u", "w", encoding="utf-8") as f:
