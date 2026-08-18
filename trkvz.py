@@ -19,10 +19,10 @@ UNAUX_RESOLVER = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
 
 def get_tr_proxy_from_proxyscrape():
     """ProxyScrape API üzerinden anlık Türkiye IP'si çeker."""
-    api_url = "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&country=tr&timeout=8000"
+    api_url = "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&country=tr&timeout=5000"
     try:
         print("ProxyScrape'den Türkiye lokasyonlu proxy aranıyor...")
-        response = requests.get(api_url, timeout=10)
+        response = requests.get(api_url, timeout=8)
         if response.status_code == 200:
             proxies = response.text.strip().split("\r\n")
             if not proxies or proxies[0] == "":
@@ -32,23 +32,27 @@ def get_tr_proxy_from_proxyscrape():
                 clean_p = p.strip()
                 if clean_p:
                     proxy_url = f"http://{clean_p}"
-                    print(f"[PROXY BULUNDU] {proxy_url}")
+                    print(f"[PROXY ADAYI] {proxy_url}")
                     return proxy_url
     except Exception as e:
         print(f"[PROXY API HATA]: {e}")
     
-    print("[UYARI] Aktif proxy bulunamadı, doğrudan bağlantı (direkt IP) denenecek.")
+    print("[BİLGİ] Proxy alınamadı, doğrudan bağlantı kullanılacak.")
     return None
 
 def get_stream_via_unaux(slug, proxy_url):
-    """1. Yol: Playwright ile proxy kullanarak Unaux üzerinden token yakalar."""
+    """Playwright ile Unaux üzerinden token yakalar."""
     with sync_playwright() as p:
         launch_args = {"headless": True, "args": ["--no-sandbox", "--disable-setuid-sandbox"]}
         
         if proxy_url:
             launch_args["proxy"] = {"server": proxy_url}
 
-        browser = p.chromium.launch(**launch_args)
+        try:
+            browser = p.chromium.launch(**launch_args)
+        except Exception:
+            return None
+
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
             locale="tr-TR"
@@ -67,8 +71,8 @@ def get_stream_via_unaux(slug, proxy_url):
         page.on("response", handle_response)
 
         try:
-            page.goto(target_url, timeout=15000, wait_until="domcontentloaded")
-            page.wait_for_timeout(3000)
+            page.goto(target_url, timeout=10000, wait_until="domcontentloaded")
+            page.wait_for_timeout(2500)
             if not captured_url and "ercdn.net" in page.url and "radyo" not in page.url.lower():
                 captured_url = page.url
         except Exception:
@@ -79,7 +83,7 @@ def get_stream_via_unaux(slug, proxy_url):
         return captured_url
 
 def get_stream_via_streamlink(web_url, proxy_url):
-    """2. Yol (Fallback): Streamlink ile proxy kullanarak doğrudan çözer."""
+    """Streamlink ile doğrudan çözer."""
     try:
         session = Streamlink()
         
@@ -93,41 +97,50 @@ def get_stream_via_streamlink(web_url, proxy_url):
         streams = session.streams(web_url)
         if streams and "best" in streams:
             return streams["best"].to_url()
-    except Exception as e:
-        print(f"[STREAMLINK HATA] {web_url}: {e}")
+    except Exception:
+        pass
     return None
 
-def resolve_channel(ch, proxy_url):
-    print(f"[{ch['name']}] Unaux deneniyor...")
-    url = get_stream_via_unaux(ch["slug"], proxy_url)
+def resolve_channel(ch):
+    # 1. Aşama: Proxy ile Unaux dene
+    proxy = get_tr_proxy_from_proxyscrape()
+    
+    print(f"[{ch['name']}] Unaux (Proxy ile) deneniyor...")
+    url = get_stream_via_unaux(ch["slug"], proxy)
     
     if url and "ercdn.net" in url:
-        print(f"[{ch['name']}] -> Unaux üzerinden başarılı.")
+        print(f"[{ch['name']}] -> Unaux (Proxy) başarılı.")
         return url
         
-    print(f"[{ch['name']}] Unaux başarısız, Streamlink Fallback devreye giriyor...")
-    url = get_stream_via_streamlink(ch["web_url"], proxy_url)
+    # 2. Aşama: Proxy başarısız olduysa Proxy'siz (Doğrudan) Unaux dene
+    if proxy:
+        print(f"[{ch['name']}] Proxy başarısız oldu, doğrudan Unaux deneniyor...")
+        url = get_stream_via_unaux(ch["slug"], None)
+        if url and "ercdn.net" in url:
+            print(f"[{ch['name']}] -> Unaux (Direkt) başarılı.")
+            return url
+
+    # 3. Aşama: Streamlink Fallback dene
+    print(f"[{ch['name']}] Streamlink Fallback deneniyor...")
+    url = get_stream_via_streamlink(ch["web_url"], None)
     
     if url:
-        print(f"[{ch['name']}] -> Streamlink üzerinden başarılı.")
+        print(f"[{ch['name']}] -> Streamlink başarılı.")
         return url
         
     return None
 
 def build_playlist():
-    # En güncel Türkiye proxy'sini API'den al
-    active_proxy = get_tr_proxy_from_proxyscrape()
-
     playlist_lines = [
         "#EXTM3U",
         "#EXT-X-VERSION:3"
     ]
 
-    print("\nProxy destekli akış çözücü başlatıldı...\n")
+    print("\nAkıllı kanal çözücü başlatıldı...\n")
     success_count = 0
 
     for ch in CHANNELS:
-        stream_url = resolve_channel(ch, active_proxy)
+        stream_url = resolve_channel(ch)
         
         if stream_url:
             playlist_lines.append(f'#EXTINF:-1 tvg-name="{ch["name"]}" group-title="Turkuvaz",{ch["name"]}')
