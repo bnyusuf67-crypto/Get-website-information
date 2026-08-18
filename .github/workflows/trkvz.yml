@@ -1,27 +1,28 @@
-name: Stream Auto Update (Self-Hosted)
+name: Turkuvaz Stream Update
 
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    - cron: '0 * * * *'  # Her saat başı çalışır
+  workflow_dispatch:      # Manuel tetikleme butonu
 
 jobs:
   update-streams:
-    runs-on: self-hosted # İşi doğrudan kendi VPS'inizde çalıştırır
+    runs-on: self-hosted # Doğrudan VPS üzerindeki runner çalıştırır
 
     steps:
-      - name: Repo Checkout
+      - name: Repoyu Çek ve Güncelle
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # En hızlı klonlama/güncelleme ayarı
 
       - name: Python Betiğini Çalıştır
         run: |
-          python3 -m pip install -q requests
           python3 trkvz.py
 
-      - name: Değişiklikleri Push Et
+      - name: Değişiklikleri Git'e Push Et
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Auto update via Self-Hosted Runner [skip ci]" || echo "Değişiklik yok"
+          git commit -m "Auto update streams via Self-Hosted [skip ci]" || echo "Değişiklik yok"
           git push origin main
