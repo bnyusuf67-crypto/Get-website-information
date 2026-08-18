@@ -1,20 +1,17 @@
-import requests
+# Kanal isimleri ve slug bilgileri
+CHANNELS = [
+    {"name": "ATV", "slug": "atv"},
+    {"name": "A Haber", "slug": "ahaber"},
+    {"name": "A News", "slug": "anews"},
+    {"name": "A Para", "slug": "apara"},
+    {"name": "A Spor", "slug": "aspor"},
+    {"name": "A2 TV", "slug": "a2tv"},
+    {"name": "Minika Çocuk", "slug": "minikacocuk"},
+    {"name": "Minika GO", "slug": "minikago"},
+    {"name": "Vav TV", "slug": "vavtv"},
+    {"name": "ATV Avrupa", "slug": "atvavrupa"}
+]
 
-# Kanal isimleri ve karşılık gelen slug değerleri
-CHANNELS = {
-    "ATV": "atv",
-    "A Haber": "ahaber",
-    "A News": "anews",
-    "A Para": "apara",
-    "A Spor": "aspor",
-    "A2 TV": "a2tv",
-    "Minika Çocuk": "minikacocuk",
-    "Minika GO": "minikago",
-    "Vav TV": "vavtv",
-    "ATV Avrupa": "atvavrupa"
-}
-
-# Şablon URL
 BASE_URL = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
 
 def build_playlist():
@@ -23,8 +20,9 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    for name, slug in CHANNELS.items():
-        # {slug} alanını ilgili kanalla dolduruyoruz
+    for ch in CHANNELS:
+        name = ch["name"]
+        slug = ch["slug"]
         stream_url = BASE_URL.format(slug=slug)
         
         playlist_lines.append(f'#EXTINF:-1 tvg-name="{name}" group-title="Turkuvaz",{name}')
