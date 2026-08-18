@@ -36,5 +36,3 @@ jobs:
           git add playlist.m3u
           git commit -m "Auto update tokenized m3u8 playlist via curl-cffi [skip ci]" || echo "Değişiklik yok"
           git push origin main
-          git commit -m "Auto update tokenized m3u8 playlist [skip ci]" || echo "Değişiklik yok"
-          git push origin main
