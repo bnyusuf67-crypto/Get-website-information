@@ -1,6 +1,8 @@
 from playwright.sync_api import sync_playwright
 from streamlink import Streamlink
 import requests
+import time
+from datetime import datetime, timedelta, timezone
 
 CHANNELS = [
     {"name": "ATV", "slug": "atv", "web_url": "https://www.atv.com.tr/canli-yayin"},
@@ -16,6 +18,28 @@ CHANNELS = [
 ]
 
 UNAUX_RESOLVER = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
+
+def get_tr_timestamp():
+    """Türkiye saat dilimine (UTC+3) göre güncel Unix timestamp ve 2 saat sonrasının bitiş süresini hesaplar."""
+    tr_tz = timezone(timedelta(hours=3))
+    now_tr = datetime.now(tr_tz)
+    # Token'ın geçerlilik süresini Türkiye saatine göre 3 saat sonrasına ayarla
+    expire_tr = now_tr + timedelta(hours=3)
+    return int(now_tr.timestamp()), int(expire_tr.timestamp())
+
+def adjust_token_timestamp(url):
+    """Yakalanan linkteki süre parametrelerini Türkiye saatine göre günceller."""
+    if not url or "ercdn.net" not in url:
+        return url
+    
+    current_ts, expire_ts = get_tr_timestamp()
+    
+    # URL içindeki 'st=' ve 'e=' parametrelerini TR zaman damgasıyla yenile
+    if "e=" in url:
+        import re
+        url = re.sub(r'e=\d+', f'e={expire_ts}', url)
+    
+    return url
 
 def get_tr_proxy_from_proxyscrape():
     """ProxyScrape API üzerinden anlık Türkiye IP'si çeker."""
@@ -80,7 +104,7 @@ def get_stream_via_unaux(slug, proxy_url):
         finally:
             browser.close()
             
-        return captured_url
+        return adjust_token_timestamp(captured_url)
 
 def get_stream_via_streamlink(web_url, proxy_url):
     """Streamlink ile doğrudan çözer."""
@@ -96,13 +120,13 @@ def get_stream_via_streamlink(web_url, proxy_url):
         
         streams = session.streams(web_url)
         if streams and "best" in streams:
-            return streams["best"].to_url()
+            raw_url = streams["best"].to_url()
+            return adjust_token_timestamp(raw_url)
     except Exception:
         pass
     return None
 
 def resolve_channel(ch):
-    # 1. Aşama: Proxy ile Unaux dene
     proxy = get_tr_proxy_from_proxyscrape()
     
     print(f"[{ch['name']}] Unaux (Proxy ile) deneniyor...")
@@ -112,7 +136,6 @@ def resolve_channel(ch):
         print(f"[{ch['name']}] -> Unaux (Proxy) başarılı.")
         return url
         
-    # 2. Aşama: Proxy başarısız olduysa Proxy'siz (Doğrudan) Unaux dene
     if proxy:
         print(f"[{ch['name']}] Proxy başarısız oldu, doğrudan Unaux deneniyor...")
         url = get_stream_via_unaux(ch["slug"], None)
@@ -120,7 +143,6 @@ def resolve_channel(ch):
             print(f"[{ch['name']}] -> Unaux (Direkt) başarılı.")
             return url
 
-    # 3. Aşama: Streamlink Fallback dene
     print(f"[{ch['name']}] Streamlink Fallback deneniyor...")
     url = get_stream_via_streamlink(ch["web_url"], None)
     
@@ -136,7 +158,7 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    print("\nAkıllı kanal çözücü başlatıldı...\n")
+    print("\nTürkiye Zaman Damgalı Akış Çözücü Başlatıldı...\n")
     success_count = 0
 
     for ch in CHANNELS:
