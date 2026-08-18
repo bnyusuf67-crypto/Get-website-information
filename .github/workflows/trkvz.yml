@@ -2,8 +2,8 @@ name: Secure Token Source Updater
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Her saat başı çalışır
-  workflow_dispatch:      # Manuel tetikleme butonu
+    - cron: '0 * * * *'  # Her saat başı otomatik çalışır
+  workflow_dispatch:      # Manuel test butonu
 
 permissions:
   contents: write
