@@ -1,22 +1,22 @@
 #EXTM3U
 #EXT-X-VERSION:3
 #EXTINF:-1 tvg-name="ATV" group-title="Turkuvaz",ATV
-https://trkvz-live.ercdn.net/atvhd/atvhd_240p.m3u8?st=9UwEHezKJRk-fADRnxoBgA&e=1787062854
+https://trkvz-live.ercdn.net/atvhd/atvhd_1080p.m3u8?st=e1LBQ5Bss_0xB63C8v_Ilg&e=1787098095
 #EXTINF:-1 tvg-name="A Haber" group-title="Turkuvaz",A Haber
-https://trkvz-live.ercdn.net/ahaberhd/ahaberhd_240p.m3u8?st=G4SCP01W6bLZYPfgLZta9A&e=1787062860
+https://trkvz-live.ercdn.net/ahaberhd/ahaberhd_720p.m3u8?st=MHabENdvvB6Q7Ys122WdMg&e=1787098102
 #EXTINF:-1 tvg-name="A News" group-title="Turkuvaz",A News
-https://trkvz-live.ercdn.net/anewshd/anewshd_240p.m3u8?st=Ysb1zBnokaBrWcEMfjvk4A&e=1787062867
+https://trkvz-live.ercdn.net/anewshd/anewshd_720p.m3u8?st=_5gdMwpPBYje5ZSDh_YxUg&e=1787098108
 #EXTINF:-1 tvg-name="A Para" group-title="Turkuvaz",A Para
-https://trkvz-live.ercdn.net/aparahd/aparahd_240p.m3u8?st=_He4rMf67h5_0k4UAZIWjA&e=1787062873
+https://trkvz-live.ercdn.net/aparahd/aparahd_720p.m3u8?st=_eSBj8C1pzTo2M96E2SlXw&e=1787098115
 #EXTINF:-1 tvg-name="A Spor" group-title="Turkuvaz",A Spor
-https://trkvz-live.ercdn.net/asporhd/asporhd_240p.m3u8?st=T5jgnN-cMstdLL5H9rc97w&e=1787062880
+https://trkvz-live.ercdn.net/asporhd/asporhd_720p.m3u8?st=z7ThukI3HtU756R1HKH6zg&e=1787098121
 #EXTINF:-1 tvg-name="A2 TV" group-title="Turkuvaz",A2 TV
-https://trkvz-live.ercdn.net/a2tv/a2tv_240p.m3u8?st=5bl0-wWl9pIfRCm5FTpAKA&e=1787062886
+https://trkvz-live.ercdn.net/a2tv/a2tv_720p.m3u8?st=HT1y0qqcggyq80du7LzJnQ&e=1787098128
 #EXTINF:-1 tvg-name="Minika Çocuk" group-title="Turkuvaz",Minika Çocuk
-https://trkvz-live.ercdn.net/minikagococuk/minikagococuk_360p.m3u8?st=-HHZp3TWdD9RiKm7eRdadA&e=1787062893
+https://trkvz-live.ercdn.net/minikagococuk/minikagococuk_576p.m3u8?st=rJGeHi86rrfsbWaZZlx7zA&e=1787098134
 #EXTINF:-1 tvg-name="Minika GO" group-title="Turkuvaz",Minika GO
-https://trkvz-live.ercdn.net/minikago/minikago_360p.m3u8?st=Ds_BL_0r2V7fD4AuIsxd4Q&e=1787062899
+https://trkvz-live.ercdn.net/minikago/minikago_576p.m3u8?st=IlXhXxU6Qos_WE_7QEAANA&e=1787098141
 #EXTINF:-1 tvg-name="Vav TV" group-title="Turkuvaz",Vav TV
-https://trkvz-live.ercdn.net/vavtv/vavtv_240p.m3u8?st=F6rWe0yPyQIouuxjI30SsA&e=1787062906
+https://trkvz-live.ercdn.net/vavtv/vavtv_720p.m3u8?st=rIl-PLsG2tWOT6ok_pL24Q&e=1787098148
 #EXTINF:-1 tvg-name="ATV Avrupa" group-title="Turkuvaz",ATV Avrupa
-https://trkvz-live.ercdn.net/atvavrupa/atvavrupa_360p.m3u8?st=-clhOvvjppCVdI7LQwMr2g&e=1787062912
+https://trkvz-live.ercdn.net/atvavrupa/atvavrupa_576p.m3u8?st=c0VjMDJZV86uoM-vhqylrQ&e=1787098155
