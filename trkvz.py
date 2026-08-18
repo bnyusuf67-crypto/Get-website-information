@@ -17,19 +17,36 @@ CHANNELS = [
 RESOLVER_URL = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
 
 def capture_ercdn_m3u8(slug, referer_url):
-    target_url = RESOLVER_URL.format(slug=slug)
+    # Curl-cffi Session kullanarak çerez (Cookie Challenge) döngüsünü otomatik yönetiyoruz
+    session = requests.Session()
     
-    headers = {
+    # Engelleme 1 & 4: Tam ve gerçekçi tarayıcı başlıkları (User-Agent, Referer, Origin, Accept)
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Referer": referer_url,
         "Origin": referer_url.rstrip('/'),
-        "Accept": "*/*"
-    }
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Sec-Ch-Ua": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": '"Windows"',
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "cross-site",
+        "Sec-Fetch-User": "?1",
+        "Upgrade-Insecure-Requests": "1"
+    })
 
     try:
-        # impersonate="chrome" ile gerçek bir tarayıcının TLS parmak izi taklit edilir
-        response = requests.get(
+        # Engelleme 2: Önce ana sayfaya istek atarak iFastNet/Unaux çerezlerini (__test vb.) topluyoruz
+        session.get("https://uzunmuhalefet.unaux.com/", impersonate="chrome", timeout=10)
+
+        # Engelleme 3 (Datacenter IP): impersonate="chrome" ile TLS imzamızı tarayıcı gibi gösterip WAF engellerini bypass ediyoruz
+        target_url = RESOLVER_URL.format(slug=slug)
+        response = session.get(
             target_url, 
-            headers=headers, 
             impersonate="chrome", 
             allow_redirects=True, 
             timeout=15
@@ -56,7 +73,7 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    print("curl-cffi ile kanal kaynakları taranıyor...\n")
+    print("Tüm güvenlik engelleri bypass edilerek kaynaklar taranıyor...\n")
 
     for ch in CHANNELS:
         name = ch["name"]
