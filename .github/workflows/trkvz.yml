@@ -1,28 +1,65 @@
-name: Turkuvaz Stream Update
+name: Secure Token Source Updater
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Her saat başı çalışır
-  workflow_dispatch:      # Manuel tetikleme butonu
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  update-streams:
-    runs-on: self-hosted # Doğrudan VPS üzerindeki runner çalıştırır
+  run-script:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Repoyu Çek ve Güncelle
+      - name: Repoyu Çek
         uses: actions/checkout@v4
+
+      - name: Cloudflare WARP Kur
+        continue-on-error: true
+        uses: fscarmen/warp-on-actions@main
+
+      - name: Python Kur
+        uses: actions/setup-python@v5
         with:
-          fetch-depth: 1 # En hızlı klonlama/güncelleme ayarı
+          python-version: '3.x'
 
-      - name: Python Betiğini Çalıştır
+      - name: Bağımlılıkları Yükle
         run: |
-          python3 trkvz.py
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
 
-      - name: Değişiklikleri Git'e Push Et
+      - name: Betiği Çalıştır (WARP Denemesi)
+        id: primary_run
+        continue-on-error: true
+        run: python trkvz.py
+
+      # FALLBACK ADIMI: WARP adımı patlarsa VPS devreye girer
+      - name: VPS Fallback (SSH ile Çalıştır)
+        if: steps.primary_run.outcome != 'success'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/stream-updater || git clone git@github.com:${{ github.repository }}.git /home/stream-updater
+            cd /home/stream-updater
+            git pull origin main
+            python3 trkvz.py
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Auto update via VPS Fallback [skip ci]" || echo "Değişiklik yok"
+            git push origin main
+
+      - name: Değişiklikleri Kaydet ve Push Et (WARP Başarılı Olduysa)
+        if: steps.primary_run.outcome == 'success'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Auto update streams via Self-Hosted [skip ci]" || echo "Değişiklik yok"
-          git push origin main
+          git status
+          git commit -m "Auto update tokens via WARP [skip ci]" || echo "Commit edilecek değişiklik yok."
+          git push
