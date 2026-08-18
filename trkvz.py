@@ -1,39 +1,40 @@
-import re
 import requests
-from datetime import datetime, timezone
-from bs4 import BeautifulSoup
-from urllib.parse import quote
+import re
 
-CHANNELS = {
-    "ATV": "https://www.atv.com.tr/canli-yayin",
-    "A Haber": "https://www.ahaber.com.tr/canli-yayin",
-    "A News": "https://www.anews.com.tr/live-stream",
-    "A Para": "https://www.apara.com.tr/canli-yayin",
-    "A Spor": "https://www.aspor.com.tr/canli-yayin",
-    "A2 TV": "https://www.a2tv.com.tr/canli-yayin",
-    "Minika Çocuk": "https://www.minikacocuk.com.tr/webtv/canli-yayin",
-    "Minika GO": "https://www.minikago.com.tr/webtv/canli-yayin",
-    "Vav TV": "https://www.vavtv.com.tr/canli-yayin",
-    "ATV Avrupa": "https://www.atvavrupa.tv/canli-yayin"
-}
-
-MAPPING_WEBSITEID_HLSURL = {
-    "9BBE055A-4CF6-4BC3-A675-D40E89B55B91": "https://trkvz.daioncdn.net/aspor/aspor.m3u8?ce=3&app=45f847c4-04e8-419a-a561-2ebf87084765",
-    "0C1BC8FF-C3B1-45BE-A95B-F7BB9C8B03ED": "https://trkvz.daioncdn.net/a2tv/a2tv.m3u8?ce=3&app=59363a60-be96-4f73-9eff-355d0ff2c758",
-    "AAE2E325-4EAE-45B7-B017-26FD7DDB6CE4": "https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&ce=3",
-    "01ED59F2-4067-4945-8204-45F6C6DB4045": "https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&ce=3",
-}
-VIDEOID_LIVE = "00000000-0000-0000-0000-000000000000"
+# Turkuvaz / CNN Türk veya ilgili yayın adresi
+TARGET_URL = "https://securevideotoken.tmgrup.com.tr/webtv/secure" # Kendi istek attığınız URL
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Referer": "https://atvavrupa.tv/",
+    "Origin": "https://atvavrupa.tv"
 }
 
-def process_channel(channel_name: str, page_url: str):
+def fetch_stream_token():
     try:
-        # 1. Adım: Kanal sayfasının HTML içeriğini al ve ID'leri çek
-        res = requests.get(page_url, headers=HEADERS, timeout=10)
-        if res.status_code != 200:
+        # Doğrudan VPS'in Türkiye IP'si ile istek atılır (Sıfır Proxy / Yüksek Hız)
+        response = requests.get(TARGET_URL, headers=HEADERS, timeout=5)
+        
+        if response.status_code == 200:
+            print("Yayın isteği başarılı! Status: 200")
+            # M3U8 veya Token alma işlemleriniz...
+            stream_data = response.text
+            
+            # Örnek: M3U dosyasına yazma
+            with open("playlist.m3u", "w", encoding="utf-8") as f:
+                f.write("#EXTM3U\n")
+                f.write("#EXTINF:-1, Kanal ATV\n")
+                f.write(f"{stream_data}\n")
+                
+            print("playlist.m3u başarıyla güncellendi.")
+        else:
+            print(f"Hata Oluştu! HTTP Kodu: {response.status_code}")
+
+    except Exception as e:
+        print(f"Bağlantı Hatası: {e}")
+
+if __name__ == "__main__":
+    fetch_stream_token()
             return None, None
 
         soup = BeautifulSoup(res.text, "html.parser")
