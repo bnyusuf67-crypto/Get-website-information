@@ -13,56 +13,41 @@ CHANNELS = [
     {"name": "ATV Avrupa", "slug": "atvavrupa"}
 ]
 
-RESOLVER_URL = "https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
+def capture_ercdn_m3u8(slug, referer_url):
+    # F12 Network mantığını taklit eden Session oluşturuyoruz
+    session = requests.Session()
+    
+    # Tarayıcı başlıklarını (Headers) birebir tanımlıyoruz
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": referer_url,
+        "Origin": referer_url.rstrip('/'),
+        "Accept": "*/*"
+    })
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36"
-}
+    # Unaux üzerindeki resolver adresine istek atıyoruz
+    target_url = f"https://uzunmuhalefet.unaux.com/trkvz.php?kanal={slug}&.m3u8"
 
-def resolve_token_m3u8(slug):
-    url = RESOLVER_URL.format(slug=slug)
     try:
-        # allow_redirects=True sayesinde HTML okumadan doğrudan 302 yönlendirmesini takip eder
-        response = requests.get(url, headers=HEADERS, timeout=10, allow_redirects=True)
+        # F12'deki tüm Redirect (302/301) ağ akışını takip eder
+        response = session.get(target_url, allow_redirects=True, timeout=10)
         
-        # Yönlendirilen son canlı m3u8 adresi
-        final_url = response.url
-        
-        if ".m3u8" in final_url and response.status_code == 200:
-            return final_url
-        else:
-            print(f"[UYARI] {slug} için yönlendirme m3u8 içermiyor: {final_url}")
-            return None
+        # 1. Yöntem: Doğrudan ulaşılan son URL (ERCdn içeriyorsa)
+        if "ercdn.net" in response.url:
+            return response.url
+
+        # 2. Yöntem: Yönlendirme geçmişindeki (Redirect History) ERCdn linkini avlama
+        for req in response.history:
+            location = req.headers.get("Location", "")
+            if "ercdn.net" in location:
+                return location
+
+        # ERCdn yakalanamadıysa son ulaşılan URL'yi döndürür
+        return response.url
+
     except Exception as e:
-        print(f"[HATA] {slug} kanalı çözülemedi: {e}")
+        print(f"[AĞ HATASI] {slug}: {e}")
         return None
 
-def build_playlist():
-    playlist_lines = [
-        "#EXTM3U",
-        "#EXT-X-VERSION:3"
-    ]
-
-    print("Doğrudan yönlendirme üzerinden token'lı m3u8 adresleri çözülüyor...\n")
-
-    for ch in CHANNELS:
-        name = ch["name"]
-        slug = ch["slug"]
-        
-        real_stream_url = resolve_token_m3u8(slug)
-        
-        if real_stream_url:
-            playlist_lines.append(f'#EXTINF:-1 tvg-name="{name}" group-title="Turkuvaz",{name}')
-            playlist_lines.append(real_stream_url)
-            print(f"[ÇÖZÜLDÜ] {name} -> {real_stream_url}")
-        else:
-            print(f"[BAŞARISIZ] {name} için link alınamadı.")
-
-    # playlist.m3u dosyasına yazma
-    with open("playlist.m3u", "w", encoding="utf-8") as f:
-        f.write("\n".join(playlist_lines) + "\n")
-        
-    print("\nplaylist.m3u başarıyla oluşturuldu.")
-
-if __name__ == "__main__":
-    build_playlist()
+# Test
+print(capture_ercdn_m3u8("atv", "https://www.atv.com.tr/"))
