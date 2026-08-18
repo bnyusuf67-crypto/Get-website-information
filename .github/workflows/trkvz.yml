@@ -2,7 +2,7 @@ name: Update Turkuvaz Playlist
 
 on:
   schedule:
-    - cron: '0 */3 * * *' # Her 3 saatte bir otomatik çalışır
+    - cron: '0 */2 * * *' # Her 2 saatte bir otomatik çalışır
   workflow_dispatch:      # Manuel olarak da tetiklenebilir
 
 jobs:
