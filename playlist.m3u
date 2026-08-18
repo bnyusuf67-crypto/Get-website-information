@@ -1,29 +1,29 @@
 #EXTM3U
 #EXTINF:-1 tvg-name="ATV",ATV
 #EXTVLCOPT:http-referrer=https://www.atv.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=BJxIPjAj11-5Tummim2UWA&e=1787075428
+https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=Eg3rio9HUZ9MQR8AOPyD9A&e=1787085165
 
 #EXTINF:-1 tvg-name="A Haber",A Haber
 #EXTVLCOPT:http-referrer=https://www.ahaber.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=PgrLxdwqAgDGNFdzYlWDEg&e=1787075429
+https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=-8lhcllEbKGvlxRkTlVjUg&e=1787085166
 
 #EXTINF:-1 tvg-name="A Para",A Para
 #EXTVLCOPT:http-referrer=https://www.apara.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=cdbtmJ9-A-q9-UpcOA4JdQ&e=1787075430
+https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=zvyqFoZHtMropCzxAqPlrw&e=1787085167
 
 #EXTINF:-1 tvg-name="Minika Çocuk",Minika Çocuk
 #EXTVLCOPT:http-referrer=https://www.minikacocuk.com.tr/webtv/canli-yayin
-https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&st=Dh0fvbPLfftWmiAQP_eDRQ&e=1787075431
+https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&st=1D3LQIulJ8kb_NpMcn-Xkg&e=1787085169
 
 #EXTINF:-1 tvg-name="Minika GO",Minika GO
 #EXTVLCOPT:http-referrer=https://www.minikago.com.tr/webtv/canli-yayin
-https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&st=Sd_zbO45oRFYrtSSaJiCZQ&e=1787075432
+https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&st=zY8Z0ei67IDuICp1yX_8NQ&e=1787085170
 
 #EXTINF:-1 tvg-name="Vav TV",Vav TV
 #EXTVLCOPT:http-referrer=https://www.vavtv.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=skVFt6Gl2jJuAkHN_QDONQ&e=1787075436
+https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=6yVlptkomi0wLRyI2IA4cw&e=1787085176
 
 #EXTINF:-1 tvg-name="ATV Avrupa",ATV Avrupa
 #EXTVLCOPT:http-referrer=https://www.atvavrupa.tv/canli-yayin
-https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=R-i62m2lyOhyAwojkYpdzQ&e=1787075438
+https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=ZdHLFfGg3lx1Y0wdJ-iFIg&e=1787085177
 
