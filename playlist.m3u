@@ -1,29 +1,22 @@
 #EXTM3U
-#EXTINF:-1 tvg-name="ATV",ATV
-#EXTVLCOPT:http-referrer=https://www.atv.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/atvhd/atvhd.m3u8?st=C1xiubq5kZUH3jFAHs_cwg&e=1787087754
-
-#EXTINF:-1 tvg-name="A Haber",A Haber
-#EXTVLCOPT:http-referrer=https://www.ahaber.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/ahaberhd/ahaberhd.m3u8?st=VnKe-c-EkQ-VsSwxtDUgCQ&e=1787087754
-
-#EXTINF:-1 tvg-name="A Para",A Para
-#EXTVLCOPT:http-referrer=https://www.apara.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/aparahd/aparahd.m3u8?st=YRuo7-4F9N5QOzICR4tS4A&e=1787087756
-
-#EXTINF:-1 tvg-name="Minika Çocuk",Minika Çocuk
-#EXTVLCOPT:http-referrer=https://www.minikacocuk.com.tr/webtv/canli-yayin
-https://trkvz.daioncdn.net/minikago_cocuk/minikago_cocuk.m3u8?app=web&st=m7HmAAdlqecnUbaXvjCm-A&e=1787087758
-
-#EXTINF:-1 tvg-name="Minika GO",Minika GO
-#EXTVLCOPT:http-referrer=https://www.minikago.com.tr/webtv/canli-yayin
-https://trkvz.daioncdn.net/minikago/minikago.m3u8?app=web&st=8_nNki1mc9C-RB7CxETAVw&e=1787087759
-
-#EXTINF:-1 tvg-name="Vav TV",Vav TV
-#EXTVLCOPT:http-referrer=https://www.vavtv.com.tr/canli-yayin
-https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8?st=9lTOUx30tNJTnCz65pohEw&e=1787087761
-
-#EXTINF:-1 tvg-name="ATV Avrupa",ATV Avrupa
-#EXTVLCOPT:http-referrer=https://www.atvavrupa.tv/canli-yayin
-https://trkvz-live.ercdn.net/atvavrupa/atvavrupa.m3u8?st=1JO6mqUB4PApG5g60mvidQ&e=1787087763
-
+#EXT-X-VERSION:3
+#EXTINF:-1 tvg-name="ATV" group-title="Turkuvaz",ATV
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=atv&.m3u8
+#EXTINF:-1 tvg-name="A Haber" group-title="Turkuvaz",A Haber
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=ahaber&.m3u8
+#EXTINF:-1 tvg-name="A News" group-title="Turkuvaz",A News
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=anews&.m3u8
+#EXTINF:-1 tvg-name="A Para" group-title="Turkuvaz",A Para
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=apara&.m3u8
+#EXTINF:-1 tvg-name="A Spor" group-title="Turkuvaz",A Spor
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=aspor&.m3u8
+#EXTINF:-1 tvg-name="A2 TV" group-title="Turkuvaz",A2 TV
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=a2tv&.m3u8
+#EXTINF:-1 tvg-name="Minika Çocuk" group-title="Turkuvaz",Minika Çocuk
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=minikacocuk&.m3u8
+#EXTINF:-1 tvg-name="Minika GO" group-title="Turkuvaz",Minika GO
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=minikago&.m3u8
+#EXTINF:-1 tvg-name="Vav TV" group-title="Turkuvaz",Vav TV
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=vavtv&.m3u8
+#EXTINF:-1 tvg-name="ATV Avrupa" group-title="Turkuvaz",ATV Avrupa
+https://uzunmuhalefet.unaux.com/trkvz.php?kanal=atvavrupa&.m3u8
