@@ -2,8 +2,11 @@ name: Update Turkuvaz Playlist
 
 on:
   schedule:
-    - cron: '0 */2 * * *' # Her 2 saatte bir otomatik çalışır
-  workflow_dispatch:      # Manuel olarak da tetiklenebilir
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write  # GitHub Actions'ın repoya yazabilmesi için kritik yetki
 
 jobs:
   update-playlist:
@@ -33,4 +36,4 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add playlist.m3u
-          git diff --staging --quiet || (git commit -m "Auto-update playlist.m3u [skip ci]" && git push)
+          git diff --cached --quiet || (git commit -m "Auto-update playlist.m3u [skip ci]" && git push)
