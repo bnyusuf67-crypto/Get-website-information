@@ -1,4 +1,20 @@
 #EXTM3U
 #EXT-X-VERSION:3
+#EXTINF:-1 tvg-name="ATV" group-title="Turkuvaz",ATV
+https://trkvz-live.ercdn.net/atvhd/atvhd_1080p.m3u8?st=1KmObbqVdQHhw48KclOa7g&e=1787096035
+#EXTINF:-1 tvg-name="A Haber" group-title="Turkuvaz",A Haber
+https://trkvz-live.ercdn.net/ahaberhd/ahaberhd_720p-1787050820.ts?st=rKyAAFT7uHACnccTTfofzg&e=1787096045
+#EXTINF:-1 tvg-name="A News" group-title="Turkuvaz",A News
+https://trkvz-live.ercdn.net/anewshd/anewshd_720p.m3u8?st=aLTc-i8TLCDSglR2GXielw&e=1787096050
+#EXTINF:-1 tvg-name="A Para" group-title="Turkuvaz",A Para
+https://trkvz-live.ercdn.net/aparahd/aparahd_720p.m3u8?st=nmWxUPLO-NJZsLtTbmpyTw&e=1787096054
+#EXTINF:-1 tvg-name="A2 TV" group-title="Turkuvaz",A2 TV
+https://trkvz-live.ercdn.net/a2tv/a2tv_720p.m3u8?st=r4bOHQXIDK89vXh1n7kZZw&e=1787096067
+#EXTINF:-1 tvg-name="Minika Çocuk" group-title="Turkuvaz",Minika Çocuk
+https://trkvz-live.ercdn.net/minikagococuk/minikagococuk_576p-1787050850.ts?st=57hVMwfNtSPemgNLej_WRw&e=1787096072
+#EXTINF:-1 tvg-name="Minika GO" group-title="Turkuvaz",Minika GO
+https://trkvz-live.ercdn.net/minikago/minikago_576p.m3u8?st=b3EsPuIIr5ra7Ux6VqVnuA&e=1787096077
 #EXTINF:-1 tvg-name="Vav TV" group-title="Turkuvaz",Vav TV
-https://trkvz-live.ercdn.net/vavtv/vavtv.m3u8
+https://trkvz-live.ercdn.net/vavtv/vavtv_720p.m3u8?st=mUTghorHWPnv3jSOUYOO8g&e=1787096081
+#EXTINF:-1 tvg-name="ATV Avrupa" group-title="Turkuvaz",ATV Avrupa
+https://trkvz-live.ercdn.net/atvavrupa/atvavrupa_576p.m3u8?st=cawMpwbG5O1SrEd8J85GjA&e=1787096086
