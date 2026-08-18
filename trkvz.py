@@ -1,6 +1,5 @@
 from curl_cffi import requests
 import re
-import json
 
 CHANNELS = [
     {"name": "ATV", "slug": "atv", "referer": "https://www.atv.com.tr/", "embed_url": "https://www.atv.com.tr/canli-yayin"},
@@ -27,22 +26,26 @@ def capture_ercdn_m3u8(channel):
     session.headers.update(headers)
 
     try:
-        # 1. Adım: Kanalın canlı yayın sayfasına bağlanıp sayfa içindeki m3u8 veya token verilerini arıyoruz
+        # 1. Adım: Canlı yayın sayfasına bağlanıp ercdn linklerini arıyoruz
         res = session.get(channel["embed_url"], impersonate="chrome", timeout=15)
         
-        # Sayfa içinde doğrudan ercdn.net geçen bir m3u8 linki var mı kontrol et
         found_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8', res.text)
         if found_links:
-            return found_links[0]
+            # Radyo linklerini ele, sadece TV akışını al
+            for link in found_links:
+                if "radyo" not in link.lower():
+                    return link
 
-        # 2. Adım: Eğer doğrudan bulunamadıysa, securevideotoken servislerini veya player kaynaklarını tara
+        # 2. Adım: Secure Video Token servislerini tarama
         token_match = re.search(r'securevideotoken\.tmgrup\.com\.tr[^\s<>"]+', res.text)
         if token_match:
             token_url = "https://" + token_match.group(0)
             token_res = session.get(token_url, impersonate="chrome", timeout=10)
             sub_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8', token_res.text)
             if sub_links:
-                return sub_links[0]
+                for link in sub_links:
+                    if "radyo" not in link.lower():
+                        return link
 
         return None
     except Exception as e:
@@ -55,7 +58,7 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    print("Turkuvaz kaynakları doğrudan Python ile taranıyor...\n")
+    print("Turkuvaz TV kaynakları doğrudan taranıyor...\n")
     success_count = 0
 
     for ch in CHANNELS:
@@ -67,7 +70,7 @@ def build_playlist():
             print(f"[BAŞARILI] {ch['name']} -> {stream_url}")
             success_count += 1
         else:
-            print(f"[REDDEDİLDİ] {ch['name']} için geçerli ercdn kaynağı bulunamadı.")
+            print(f"[REDDEDİLDİ] {ch['name']} için geçerli TV kaynağı bulunamadı.")
 
     if success_count > 0:
         with open("playlist.m3u", "w", encoding="utf-8") as f:
