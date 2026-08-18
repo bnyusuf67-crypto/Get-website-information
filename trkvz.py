@@ -1,17 +1,18 @@
 from curl_cffi import requests
 import re
+import json
 
 CHANNELS = [
-    {"name": "ATV", "slug": "atv", "referer": "https://www.atv.com.tr/", "embed_url": "https://www.atv.com.tr/canli-yayin"},
-    {"name": "A Haber", "slug": "ahaber", "referer": "https://www.ahaber.com.tr/", "embed_url": "https://www.ahaber.com.tr/canli-yayin"},
-    {"name": "A News", "slug": "anews", "referer": "https://anews.com.tr/", "embed_url": "https://www.anews.com.tr/anews-hd"},
-    {"name": "A Para", "slug": "apara", "referer": "https://www.apara.com.tr/", "embed_url": "https://www.apara.com.tr/apara-canli-yayin"},
-    {"name": "A Spor", "slug": "aspor", "referer": "https://www.aspor.com.tr/", "embed_url": "https://www.aspor.com.tr/aspor-canli-yayin"},
-    {"name": "A2 TV", "slug": "a2tv", "referer": "https://www.a2tv.com.tr/", "embed_url": "https://www.a2tv.com.tr/canli-yayin"},
-    {"name": "Minika Çocuk", "slug": "minikacocuk", "referer": "https://www.minikacocuk.com.tr/", "embed_url": "https://www.minikacocuk.com.tr/canli-yayin"},
-    {"name": "Minika GO", "slug": "minikago", "referer": "https://www.minikago.com.tr/", "embed_url": "https://www.minikago.com.tr/canli-yayin"},
-    {"name": "Vav TV", "slug": "vavtv", "referer": "https://www.vavtv.com.tr/", "embed_url": "https://www.vavtv.com.tr/canli-yayin"},
-    {"name": "ATV Avrupa", "slug": "atvavrupa", "referer": "https://www.atvavrupa.tv/", "embed_url": "https://www.atvavrupa.tv/canli-yayin"}
+    {"name": "ATV", "slug": "atv", "referer": "https://www.atv.com.tr/", "video_id": "atvhd"},
+    {"name": "A Haber", "slug": "ahaber", "referer": "https://www.ahaber.com.tr/", "video_id": "ahaber"},
+    {"name": "A News", "slug": "anews", "referer": "https://anews.com.tr/", "video_id": "anewshd"},
+    {"name": "A Para", "slug": "apara", "referer": "https://www.apara.com.tr/", "video_id": "aparahd"},
+    {"name": "A Spor", "slug": "aspor", "referer": "https://www.aspor.com.tr/", "video_id": "asporhd"},
+    {"name": "A2 TV", "slug": "a2tv", "referer": "https://www.a2tv.com.tr/", "video_id": "a2tv"},
+    {"name": "Minika Çocuk", "slug": "minikacocuk", "referer": "https://www.minikacocuk.com.tr/", "video_id": "minikacocuk"},
+    {"name": "Minika GO", "slug": "minikago", "referer": "https://www.minikago.com.tr/", "video_id": "minikago"},
+    {"name": "Vav TV", "slug": "vavtv", "referer": "https://www.vavtv.com.tr/", "video_id": "vavtv"},
+    {"name": "ATV Avrupa", "slug": "atvavrupa", "referer": "https://www.atvavrupa.tv/", "video_id": "atvavrupa"}
 ]
 
 def capture_ercdn_m3u8(channel):
@@ -21,46 +22,48 @@ def capture_ercdn_m3u8(channel):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
         "Referer": channel["referer"],
         "Origin": channel["referer"].rstrip('/'),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept": "*/*",
         "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7"
     }
     session.headers.update(headers)
 
     try:
-        # 1. Adım: Canlı yayın sayfasına bağlanıp securevideotoken adresini ve token parametrelerini çekiyoruz
-        res = session.get(channel["embed_url"], impersonate="chrome", timeout=15)
+        # Turkuvaz güvenli video token servisinin doğrudan çağrı yapısı
+        # Bu yöntem sayfa içindeki JS karmaşasını atlayarak direkt token üretir
+        token_api_url = f"https://securevideotoken.tmgrup.com.tr/webtv/secure?json=true&q={channel['video_id']}"
         
-        # Sayfa içinde securevideotoken.tmgrup.com.tr adresini ve token/parametrelerini tam olarak yakala
-        token_match = re.search(r'https?://securevideotoken\.tmgrup\.com\.tr[^\s<>"]+', res.text)
-        if not token_match:
-            # Bazı sayfalar tırnak içinde veya başka formatta tutabilir, alternatif regex
-            token_match = re.search(r'securevideotoken\.tmgrup\.com\.tr[^\s<>"\']+', res.text)
+        res = session.get(token_api_url, impersonate="chrome", timeout=15)
+        
+        if res.status_code == 200:
+            # Gelen JSON yanıtı içerisindeki m3u8 / ercdn linkini ayıkla
+            try:
+                data = res.json()
+                # Yanıt yapısına göre url alanını yakala
+                stream_url = data.get("url") or data.get("Stream") or data.get("Data")
+                if stream_url and "ercdn.net" in stream_url:
+                    return stream_url
+            except json.JSONDecodeError:
+                pass
             
-        if token_match:
-            raw_token_url = token_match.group(0)
-            token_url = raw_token_url if raw_token_url.startswith("http") else "https://" + raw_token_url
-            
-            # 2. Adım: Token servisine istek atarak dinamik/güvenli token'lı ercdn m3u8 adresini alıyoruz
-            token_res = session.get(token_url, impersonate="chrome", timeout=10)
-            
-            # Gelen yanıt içerisindeki ercdn.net uzantılı token'lı linkleri bul
-            sub_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8[^\s<>"]*', token_res.text)
-            if sub_links:
-                for link in sub_links:
-                    # Radyo veya geçersiz yayınları ele, token parametresi (st=,h= vb.) içeren gerçek akışı seç
+            # Eğer JSON yerine direkt düz metin içinde döndüyse regex ile çek
+            found_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8[^\s<>"]*', res.text)
+            if found_links:
+                for link in found_links:
                     if "radyo" not in link.lower():
                         return link
 
-        # Alternatif: Eğer doğrudan sayfada token'lı ercdn linki gömülüyse
-        direct_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8[^\s<>"]*', res.text)
-        if direct_links:
-            for link in direct_links:
-                if "radyo" not in link.lower():
-                    return link
+        # Yedek olarak doğrudan canlı yayın sayfasını tarama
+        embed_fallback = f"https://www.atv.com.tr/canli-yayin" if "atv" in channel["slug"] else channel["referer"] + "canli-yayin"
+        fallback_res = session.get(embed_fallback, impersonate="chrome", timeout=15)
+        fallback_links = re.findall(r'https?://[^\s<>"]+?ercdn\.net[^\s<>"]+?\.m3u8[^\s<>"]*', fallback_res.text)
+        
+        for link in fallback_links:
+            if "radyo" not in link.lower():
+                return link
 
         return None
     except Exception as e:
-        print(f"[HATA] {channel['name']} token çözülemedi: {e}")
+        print(f"[HATA] {channel['name']} token alınamadı: {e}")
         return None
 
 def build_playlist():
@@ -69,7 +72,7 @@ def build_playlist():
         "#EXT-X-VERSION:3"
     ]
 
-    print("Turkuvaz token tabanlı akışlar taranıyor...\n")
+    print("Turkuvaz token API'leri taranıyor...\n")
     success_count = 0
 
     for ch in CHANNELS:
@@ -81,14 +84,14 @@ def build_playlist():
             print(f"[BAŞARILI] {ch['name']} -> {stream_url}")
             success_count += 1
         else:
-            print(f"[REDDEDİLDİ] {ch['name']} için geçerli token'lı kaynak alınamadı.")
+            print(f"[REDDEDİLDİ] {ch['name']} için token alınamadı.")
 
     if success_count > 0:
         with open("playlist.m3u", "w", encoding="utf-8") as f:
             f.write("\n".join(playlist_lines) + "\n")
         print(f"\nplaylist.m3u başarıyla güncellendi ({success_count} kanal).")
     else:
-        print("\n[UYARI] Hiçbir kanal için token'lı kaynak bulunamadı, dosya değiştirilmedi.")
+        print("\n[UYARI] Hiçbir kanal için kaynak bulunamadı, dosya değiştirilmedi.")
 
 if __name__ == "__main__":
     build_playlist()
