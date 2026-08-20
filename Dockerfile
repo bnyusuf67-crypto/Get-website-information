@@ -1,0 +1,27 @@
+# Python tabanlı hafif Slim imajı
+FROM python:3.10-slim
+
+# Sistem güncellemeleri ve FFmpeg kurulumu
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Çalışma dizinini ayarla
+WORKDIR /app
+
+# Bağımlılıkları kopyala ve yükle
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Proje dosyalarını kopyala
+COPY . .
+
+# HLS segmentlerinin yazılacağı dizini oluştur
+RUN mkdir -p hls_stream
+
+# Render / Konteyner portunu dışa aç
+EXPOSE 10000
+
+# İsteğe bağlı: --timeout 120 eklendi (İlk yüklemede URL çekme yavaşlarsa Gunicorn süreci kesmesin diye)
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "1", "--threads", "4", "--timeout", "120", "app:app"]
