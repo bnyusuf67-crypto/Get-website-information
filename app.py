@@ -7,7 +7,7 @@ import time
 import requests
 import urllib3
 from urllib.parse import urljoin
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, request  # hls.js preflight kontrolü için 'request' eklendi
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -168,7 +168,7 @@ threading.Thread(target=stream_watchdog, daemon=True).start()
 @app.route("/")
 def index():
     return """
-    <h1>CNN Türk HLS Streamer (Reversed Quality Order)</h1>
+    <h1>CNN Türk HLS Streamer (Full hls.js & CORS Support)</h1>
     <ul>
         <li><a href='/hls_stream/master.m3u8'>Master Playlist (En yüksekten başlar)</a></li>
         <li><a href='/hls_stream/track_4_1000.m3u8'>Track 4 (1000k - En Yüksek)</a></li>
@@ -176,21 +176,35 @@ def index():
         <li><a href='/hls_stream/track_2_550.m3u8'>Track 2 (550k)</a></li>
         <li><a href='/hls_stream/track_1_320.m3u8'>Track 1 (320k)</a></li>
         <li><a href='/hls_stream/track_0_192.m3u8'>Track 0 (192k - En Düşük)</a></li>
-        <li><a href='/restart'>Manuel Başlatma Tuşu</a></li>
         <li><a href='/health'>Health Status</a></li>
     </ul>
     """
 
-@app.route("/hls_stream/<path:filename>")
+@app.route("/hls_stream/<path:filename>", methods=["GET", "OPTIONS"])
 def serve_hls(filename):
     global ffmpeg_process
     
+    # 1. Tarayıcının OPTIONS (Preflight) isteğine onay ver
+    if request.method == "OPTIONS":
+        response = app.make_default_options_response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Range"
+        return response
+
+    # 2. LAZY LOAD: İlk izleyici isteğinde yayın başlatılır
     if ffmpeg_process is None or ffmpeg_process.poll() is not None:
         print("[LAZY LOAD] İlk izleyici isteği geldi. CNN Türk yayını başlatılıyor...")
         start_ffmpeg_process()
         
     response = send_from_directory(HLS_DIR, filename)
+    
+    # 3. hls.js Uyumlu Tam CORS Başlıkları
     response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Range"
+    response.headers["Access-Control-Expose-Headers"] = "Content-Length, Content-Range"
+    
     return response
 
 @app.route("/health")
