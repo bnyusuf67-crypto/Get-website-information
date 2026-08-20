@@ -170,12 +170,13 @@ def index():
     return """
     <h1>CNN Türk HLS Streamer (Full hls.js & CORS Support)</h1>
     <ul>
-        <li><a href='/hls_stream/master.m3u8'>Master Playlist (En yüksekten başlar)</a></li>
+        <li><a href='/hls_stream/master.m3u8'>Master Playlist</a></li>
         <li><a href='/hls_stream/track_4_1000.m3u8'>Track 4 (1000k - En Yüksek)</a></li>
         <li><a href='/hls_stream/track_3_750.m3u8'>Track 3 (750k)</a></li>
         <li><a href='/hls_stream/track_2_550.m3u8'>Track 2 (550k)</a></li>
         <li><a href='/hls_stream/track_1_320.m3u8'>Track 1 (320k)</a></li>
         <li><a href='/hls_stream/track_0_192.m3u8'>Track 0 (192k - En Düşük)</a></li>
+        <li><a href='/start'>Yeniden Başlatma Tuşu</a></li>
         <li><a href='/health'>Health Status</a></li>
     </ul>
     """
